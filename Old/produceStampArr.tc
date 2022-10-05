@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <dirent.h>
+#include "fitsio.h"
+
+#define PI 3.141592654
+#define N_AXES 1024
+#define N_STAMP 20
+
+/*==========================================================================*/
+
+void produceStamp(float image[][N_AXES], int px, int py, float stamp[][N_STAMP]){
+
+/***************************************************************************/
+/* Constructs image stamp for target star from base image                   */
+/***************************************************************************/
+
+/*
+  LOOP variable initialization */
+  int ii, jj;
+
+  for(jj=0; jj<N_STAMP; jj++){
+    for(ii=0; ii<N_STAMP; ii++){
+      stamp[ii][jj]=image[px-(N_STAMP/2)+ii][py-(N_STAMP/2)+jj];
+    }
+  }
+
+  printf("\nTarget star image stamp produced\n");
+}
+
+/*==========================================================================*/

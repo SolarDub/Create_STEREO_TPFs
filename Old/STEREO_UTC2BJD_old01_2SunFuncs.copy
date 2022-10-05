@@ -1,0 +1,455 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <math.h>
+#include <dirent.h>
+#include "fitsio.h"
+
+#define PI 3.141592654
+#define N_AXES 1024
+#define fIGREG (15+31L*(10+12L*1582))
+#define tIGREG (2299161)
+#define CHAR_SIZE 1024
+
+double JD_GUTC(int *date_ymd, int *time_hms);
+int GUTC_JD(double jul, int *date_ymd);
+int leapSeconds(int *date_ymd);
+void Sun2StA(int *date_ymd, int *time_hms, double *RAdeg, double *DCdeg, double *delta, char *base_dir);
+void Sun2Bary(int *date_ymd, int *time_hms, double *RAdeg, double *DCdeg, double *delta, char *base_dir);
+
+/*==========================================================================*/
+
+double STEREO_UTC2BJD(int *date_ymd, int *time_hms, double px, double py, double *coords, char *base_dir){
+
+/********************************************************************************/
+/* Estimate BJD from UTC of photon arrival times from sourve located at px & py */
+/********************************************************************************/
+
+  int aspd = 3600;           /* Arcseconds per degree */
+  int aspp = 70;             /* Arcseconds per pixel */
+  int ds2ic = 14;            /* Sun to image center = 14 degrees */
+
+  int px_cs, py_cs, px_s, py_s;       
+
+  float pcx = (N_AXES/2+0.5), pcy = pcx; /* Pixel coordinates at image center */
+  float px_c, py_c, p_s, angle;  
+
+  float romerpx;
+  float spd    = 86400.0;            /* Seconds per day */
+  float c      = 299792.458;         /* Speed of light in vacuum in km/s */
+  float DE     = 149597870.700;      /* Earth-Sun distance in km */
+  float RsAU   = 0.9618568;          /* STEREO_A-Sun mean distance in AU */
+  float UTC2TT = 32.184;             /* International Atomic Time (TAI) */
+                                     /* to Terrestrial Time (TT) correction */
+                                     /* UTC and TAI run at same rate */
+  int sign = 1;
+  double RAstar, DCstar;
+  double RASunStA, DSunStA, RAStASun, DCSunStA, DCStASun;
+  double romer, HJD;
+  double RASunBary, DSunBary, RABarySun, DCSunBary, DCBarySun;
+  double HJD2BJD, BJD;
+
+  px_c = px - pcx;          /* Pixel x-coordinate of star from image center */
+  py_c = py - pcy;          /* Pixel y-coordinate of star from image center */
+
+  px_cs = ds2ic*aspd/aspp; /* Number of x-pixels from image center to Sun (~720 pixels) */
+  py_cs = 0;               /* Number of y-pixels from image center to Sun (0 assumed) */
+
+  px_s = px_c - px_cs;    /* Pixel x-coordinate from Sun */
+  py_s = py_c - py_cs;    /* Pixel y-coordinate from Sun */
+
+  p_s = sqrt(px_s*px_s + py_s*py_s);  /* Image pixel distance from Sun to star */
+ 
+  angle = (PI/180.0)*(p_s*aspp/aspd);  /* Angular distance from Sun to star (radians) */
+
+  romerpx = RsAU*(DE/c)*cos(angle);  /* Romer Delay correction for BJD calculation */
+
+//  printf("\nbeta from pixels: %f\n", angle/(PI/180.0));
+//  printf("\nRomer from pixels: %f\n", romerpx);
+
+  Sun2StA(date_ymd, time_hms, &RASunStA, &DCSunStA, &DSunStA, base_dir);
+  RAstar=15*(coords[0] + coords[1]/60.0 + coords[2]/3600.0);
+  RAStASun = RASunStA + 180;
+  RAStASun = RAStASun - 360.0*floor(RAStASun/360.0);
+
+  if ((coords[3] == 0 && coords[4] == 0 && coords[5] < 0) ||
+      (coords[3] == 0 && coords[4] < 0 ) ||
+      (coords[3] < 0 ))
+     sign = -1;
+
+  DCstar = sign * (fabs(coords[0]) + (fabs(coords[1]) + (fabs(coords[2])/60.0))/60.0);
+  DCStASun = -DCSunStA;
+
+  romer = DSunStA*(DE/c)*cos((PI/180.0)*(fabs(RAStASun-RAstar)))
+                        *cos((PI/180.0)*(fabs(DCStASun-DCstar)));
+
+  printf("Dist (AU) of Sun to Stereo A:\t%16.14f\n",DSunStA);
+
+  printf("RA (deg) Sun to Stereo A:\t%11.7f\n",RASunStA);
+  printf("RA (deg) Sun to Star:\t%11.7f\n",RAstar);
+  printf("RA (deg) Stereo A to Sun:\t%11.7f\n",RAStASun);
+
+  printf("DEC (deg) Sun to Stereo A:\t%11.7f\n",DCSunStA);
+  printf("DEC (deg) Sun to Star:\t%11.7f\n",DCstar);
+  printf("DEC (deg) Stereo A to Sun:\t%11.7f\n",DCStASun);
+
+  printf("\nbeta from horizons: %f deg\n", fabs(RAStASun-RAstar));
+  printf("\neps from horizons: %f deg\n", fabs(DCStASun-DCstar));
+
+  printf("\nRomer from horizons: %f sec\n", romer);
+
+  printf("\n\n");
+
+  HJD = JD_GUTC(date_ymd, time_hms) + (UTC2TT + leapSeconds(date_ymd) - romer)/spd; 
+  /* Romer Delay is subtracted as spacecraft on opposite side of Sun to star.
+  So light reaching barycenter does so about 8 min before reaching spacecraft.
+  Second parentheses converted from secs into days with spd.                   */
+
+  Sun2Bary(date_ymd, time_hms, &RASunBary, &DCSunBary, &DSunBary, base_dir);
+
+  printf("Dist (AU) of Sun to Barycenter:\t%16.14f\n",DSunBary);
+
+  printf("RA (deg) Sun to Barycenter:\t%11.7f\n",RASunBary);
+  printf("RA (deg) Sun to Star:\t%11.7f\n",RAstar);
+
+  printf("DEC (deg) Sun to Barycenter:\t%11.7f\n",DCSunBary);
+  printf("DEC (deg) Sun to Star:\t%11.7f\n",DCstar);
+
+  printf("\nbeta from horizons: %f deg\n", fabs(RASunBary-RAstar));
+  printf("\neps from horizons: %f deg\n", fabs(DCSunBary-DCstar));
+
+  HJD2BJD = DSunBary*(DE/c)*cos((PI/180.0)*(fabs(RASunBary-RAstar)))
+                        *cos((PI/180.0)*(fabs(DCSunBary-DCstar)));
+
+  printf("\nHJD2BJD: %f sec\n", HJD2BJD);
+
+  /* if star is on same side of Sun as barycenter, beta < 180, subtract pos HJD2BJD */
+  /* if star is on opp side of Sun as barycenter, beta > 180, subtract neg HJD2BJD */
+  BJD = HJD - HJD2BJD/spd;
+
+  printf("\nImage date (time):\t%04d/%02d/%02d (%02d:%02d:%02d)\n",
+          date_ymd[0], date_ymd[1], date_ymd[2],
+          time_hms[0], time_hms[1], time_hms[2]);
+
+  printf("Heliocentric:\t%12.7f\n",HJD);
+  printf("Barycentric JD_TT:\t%12.7f\n",BJD);
+
+  return(BJD);
+}
+
+/*==========================================================================*/
+
+double JD_GUTC(int *date_ymd, int *time_hms){
+
+/***************************************************************************/
+/* Calculate UTC Gregorian Julian Day including partial day as decimal     */
+/* [Adapted from 'Numerical Recipes, Press et. al (1986)]                  */
+/***************************************************************************/
+
+  double jul;
+  int ja,jy=date_ymd[0], mm=date_ymd[1], id=date_ymd[2], jm;
+  double par_days;
+
+
+  /* partial JD set by time of day (new JD begins at noon) */
+  par_days = (time_hms[0] - 12 + (time_hms[1] + (time_hms[2]/60.0))/60.0)/24.0;
+
+
+  if (jy == 0)
+  {
+    printf("There is no year %d.", jy);
+    return(-9999);
+  }
+  if (mm > 2) { 
+    jm=mm+1;
+  } else {
+    --jy;
+    jm=mm+13;
+  }
+
+  jul = (long) (floor(365.25*jy)+floor(30.6001*jm)+id+1720995);
+
+  if (id+31L*(mm+12L*date_ymd[0]) >= fIGREG) { 
+    ja = (long)(0.01*jy);
+    jul += 2-ja+(long) (0.25*ja);
+  }
+
+  jul += par_days;
+
+  return jul;
+}
+
+/*==========================================================================*/
+
+int GUTC_JD(double jul, int *date_ymd){
+
+/***************************************************************************/
+/* Calculate UTC Gregorian Julian Day including partial day as decimal     */
+/* [From 'Numerical Recipes, Press et. al (1986)]                  */
+/***************************************************************************/
+
+  long jalpha,ja,jb,jc,jd,je;
+  int iyyy, mm, id;
+
+
+  if (jul >= tIGREG)
+  {
+    jalpha = (int)(((jul-1867216)-0.25)/36524.25);
+    ja = jul + 1 + jalpha - (int) (0.25*jalpha);
+  }
+  else if (jul < 0)
+  {
+    ja = jul + 36525*(1-jul/36525);
+  }
+  else
+    ja = jul;
+
+  jb = ja + 1524;
+  jc = (long) (6680.0 + ((double) (jb-2439870)-122.1)/365.25);
+  jd = (long) (365 * jc + (0.25*jc));
+  je = (long) ((jb-jd)/30.6001);
+
+  id = jb - jd - (long) (30.6001 * je);
+  
+  mm = je - 1;
+  if (mm > 12)
+    mm = mm - 12;
+
+  iyyy = jc - 4715;
+
+  if (mm > 2)
+    iyyy -= 1;
+
+  if (iyyy <= 0)
+    iyyy -= 1;
+
+  date_ymd[0]=iyyy;
+  date_ymd[1]=mm;
+  date_ymd[2]=id;
+
+  return 0;
+}
+
+/*==========================================================================*/
+
+int leapSeconds(int *ymd){
+
+/***************************************************************************/
+/* Number of Leap Seconds to be added                                      */
+/***************************************************************************/
+
+  if (ymd[0] >= 2017 && ymd[1] >= 1 && ymd[1] >= 1)       /* Add 37s after 12/31/2016 */
+    return(37);
+  else if (ymd[0] >= 2015 && ymd[1] >= 7 && ymd[1] >= 1)  /* Add 36s after 06/30/2015 */
+    return(36);
+  else if (ymd[0] >= 2012 && ymd[1] >= 7 && ymd[1] >= 1)  /* Add 35s after 06/30/2012 */
+    return(35);
+  else if (ymd[0] >= 2009 && ymd[1] >= 1 && ymd[1] >= 1)  /* Add 34s after 12/31/2008 */
+    return(34);
+  else
+    return(33);    /* Add 33s before 01/01/2009 */
+}
+
+/*==========================================================================*/
+
+void Sun2StA(int *date_ymd, int *time_hms, double *RAdeg, double *DCdeg, double *delta, char *base_dir){
+
+/***************************************************************************/
+/***************************************************************************/
+
+  FILE *fptr;
+  int bufflen = 6;
+  const char fileprefsuff[] = "tables/ephem/horizons_results_Sun2StA";
+  char *filename=malloc(CHAR_SIZE);
+  char buff[bufflen];
+  char date[12], time[6];
+  char RAhS[3], RAmS[3], RAsS[6];
+  char DCdS[4], DCmS[3], DCsS[5];
+  char deltaS[17], deldotS[10];
+  const char *mhstr[] = {"Jan","Feb","Mar","Apr","May","Jun"
+                 ,"Jul","Aug","Sep","Oct","Nov","Dec"};
+  char dtstr[12];
+  char tmstr[6];
+  int i, sign = 1;
+  int yr=date_ymd[0], mh=date_ymd[1], dy=date_ymd[2];
+  double RAh, RAm, RAs, DCd, DCm, DCs;
+
+  // Produde date and time strings
+  sprintf(dtstr, "%d-%s-%02d", yr, mhstr[mh-1], dy);
+  sprintf(tmstr, "%02d:%02d", time_hms[0], time_hms[1]);
+  printf("\nSun to Stereo A routine\n");
+  printf("\n%s\t%s\n",dtstr,tmstr);
+  sprintf(filename, "%s/%s-%d.txt", base_dir, fileprefsuff, yr);
+  printf("Checking for: %s\n", filename);
+
+  // Open data file
+  fptr = fopen(filename,"r");
+  if(fptr == NULL){
+    perror("Unable to open file.");
+    free(filename);
+    exit(1);
+  }
+
+  printf("Reading from: %s\n",filename);
+
+  // Find beginning of data lines
+  while (fgets(buff,bufflen,fptr)){
+      if (strstr(buff,"$$S") != 0){
+        printf("\n\nStart looking through data.\n\n");
+        break;
+      }
+  }
+
+  fgetc(fptr);   // Skip the $$SOE start of data code
+
+  // Scan through each data line and write data into variables
+  for(i=0;i<(366*36)+1;i++){
+
+    fscanf(fptr, "%s %s     %s %s %s %s %s %s %s   %s\n"
+               , date, time
+               , RAhS, RAmS, RAsS
+               , DCdS, DCmS, DCsS
+               , deltaS, deldotS);
+
+    if((strcmp(date,dtstr) == 0) && (strcmp(time,tmstr) == 0)){
+      printf("\nStereo A position from Sun:");
+      printf("\nDelta:\t%s AU", deltaS);
+      printf("\nRA:\t%sh %sm %ss", RAhS, RAmS, RAsS);
+      printf("\nDEC:\t%sd %sm %ss", DCdS, DCmS, DCsS);
+      printf("\n\n");
+
+      RAh=strtod(RAhS,NULL);
+      RAm=strtod(RAmS,NULL);
+      RAs=strtod(RAsS,NULL);
+      *RAdeg=15*(RAh+RAm/60.+RAs/3600);
+
+      DCd=strtod(DCdS,NULL);
+      DCm=strtod(DCmS,NULL);
+      DCs=strtod(DCsS,NULL);
+
+      if ((DCd == 0 && DCm == 0 && DCs < 0) ||
+          (DCd == 0 && DCm < 0 ) ||
+          (DCd < 0 ))
+          sign = -1;
+
+      *DCdeg = sign * (fabs(DCd) + (fabs(DCm) + (fabs(DCs)/60.0))/60.0);
+
+      printf("\nDEC:\t%fd %fm %fs (sign: %d)\n", DCd, DCm, DCs, sign);
+      printf("\nDEC:\t%fd\n\n", *DCdeg);
+
+
+      *delta=strtod(deltaS,NULL);      
+
+      break;
+    }
+
+  }
+
+  fclose(fptr);
+
+  free(filename);
+
+}
+
+/*==========================================================================*/
+
+void Sun2Bary(int *date_ymd, int *time_hms, double *RAdeg, double *DCdeg, double *delta, char *base_dir){
+
+/***************************************************************************/
+/***************************************************************************/
+
+  FILE *fptr;
+  int bufflen = 7;
+  const char fileprefsuff[] = "tables/ephem/horizons_results_Sun2Bary";
+  char *filename=malloc(CHAR_SIZE);
+  char buff[bufflen];
+  char date[12], time[6];
+  char RAhS[3], RAmS[3], RAsS[6];
+  char DCdS[4], DCmS[3], DCsS[5];
+  char deltaS[17], deldotS[10];
+  const char *mhstr[] = {"Jan","Feb","Mar","Apr","May","Jun"
+                 ,"Jul","Aug","Sep","Oct","Nov","Dec"};
+  char dtstr[12];
+  char tmstr[6];
+  int i, sign = 1;
+  int yr=date_ymd[0], mh=date_ymd[1], dy=date_ymd[2];
+  double RAh, RAm, RAs, DCd, DCm, DCs;
+
+  // Produde date and time strings
+  sprintf(dtstr, "%d-%s-%02d", yr, mhstr[mh-1], dy);
+  sprintf(tmstr, "%02d:%02d", time_hms[0], time_hms[1]);
+  printf("\nBarycenter routine\n");
+  printf("\n%s\t%s\n",dtstr,tmstr);
+  sprintf(filename, "%s/%s-%d.txt", base_dir, fileprefsuff, yr);
+  printf("Checking for: %s\n", filename);
+
+  // Open data file
+  fptr = fopen(filename,"r");
+  if(fptr == NULL){
+    perror("Unable to open file.");
+    free(filename);
+    exit(1);
+  }
+
+  printf("Reading from: %s\n",filename);
+
+  // Find beginning of data lines
+  while (fgets(buff,bufflen,fptr)){
+//      printf("%s\n",buff);
+      if (strstr(buff,"$S") != 0){
+        printf("\n\nStart looking through data.\n\n");
+        break;
+      }
+  }
+
+  fgetc(fptr);   // Skip the $$SOE start of data code
+
+  // Scan through each data line and write data into variables
+  for(i=0;i<(366*36)+1;i++){
+
+
+    fscanf(fptr, "%s %s     %s %s %s %s %s %s %s   %s\n"
+               , date, time
+               , RAhS, RAmS, RAsS
+               , DCdS, DCmS, DCsS
+               , deltaS, deldotS);
+
+    if((strcmp(date,dtstr) == 0) && (strcmp(time,tmstr) == 0)){
+      printf("\nBarycenter position from Sun:");
+      printf("\nDelta:\t%s AU", deltaS);
+      printf("\nRA:\t%sh %sm %ss", RAhS, RAmS, RAsS);
+      printf("\nDEC:\t%sd %sm %ss", DCdS, DCmS, DCsS);
+      printf("\n\n");
+
+      RAh=strtod(RAhS,NULL);
+      RAm=strtod(RAmS,NULL);
+      RAs=strtod(RAsS,NULL);
+      *RAdeg=15*(RAh+RAm/60.+RAs/3600);
+
+      DCd=strtod(DCdS,NULL);
+      DCm=strtod(DCmS,NULL);
+      DCs=strtod(DCsS,NULL);
+
+      if ((DCd == 0 && DCm == 0 && DCs < 0) ||
+          (DCd == 0 && DCm < 0 ) ||
+          (DCd < 0 ))
+          sign = -1;
+
+      *DCdeg = sign * (fabs(DCd) + (fabs(DCm) + (fabs(DCs)/60.0))/60.0);
+
+      printf("\nDEC:\t%fd %fm %fs (sign: %d)\n", DCd, DCm, DCs, sign);
+      printf("\nDEC:\t%fd\n\n", *DCdeg);
+
+
+      *delta=strtod(deltaS,NULL);      
+
+      break;
+    }
+
+  }
+
+  fclose(fptr);
+
+  free(filename);
+
+}

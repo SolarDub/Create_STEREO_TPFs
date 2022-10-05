@@ -1,0 +1,51 @@
+
+******************************************************************************************
+
+*************************
+ReadStarFile.sh HELP FILE
+*************************
+
+
+To execute:
+
+    ./ReadStarFile.sh [--help] [--ohelp] [-d] [-f]
+
+Description:
+
+    --help	Prints this help file
+
+    --ohelp	Lists the STEREO orbits by number.
+		Each new orbit starts as the center of the HI-1A passes by 0h RA.
+
+    Both the above will quit execution on printing their respective help files.
+    After entering the data relevant to the selection of the switches below,
+    execution of the program will commence
+
+    -d		Prompts user to change directory paths.
+
+		First path is to this script to be verified by the user.
+		This is necessary to establish a path to the directory/URL text file.
+		
+		Second path is to the base STEREO HI1A data directory.
+		It's default is of the form ##/##/stereo/h1a
+                This contains the HI-1A image FITS files contructed by
+                year -> month -> day.
+
+		Third path is to the base STEREO stellar target pixel file data directory.
+		It's default is of the form ##/##/stereo/StellarData
+                This will contain the target pixel FITS files created by the program
+                for a selected star and will place the files into a directory named with
+                the star as listed in the input star list file (see below).
+
+    -f		Prompts user to change the input star list file.
+
+		This is the base path to the STEREO HI1A data.
+		
+		Default: 
+
+		https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi_hi/L2/a/img/hi_1
+
+
+******************************************************************************************
+
+
