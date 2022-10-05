@@ -75,12 +75,12 @@ int image_date_time(int *date_ymd, int *time_hms, int dt, int it)
         time_hms[0]=time_hms[0]-24;
 
 
-        if ((date_ymd[1] == 2 && date_ymd[0]%4 != 0) && (date_ymd[2] > 29))
+        if ((date_ymd[1] == 2 && date_ymd[0]%4 == 0) && (date_ymd[2] > 29))
         {
           date_ymd[1]++;
           date_ymd[2]=date_ymd[2]-29;
         }
-        else if ((date_ymd[1] == 2 && date_ymd[0]%4 == 0) && (date_ymd[2] > 28))
+        else if ((date_ymd[1] == 2 && date_ymd[0]%4 != 0) && (date_ymd[2] > 28))
         {
           date_ymd[1]++;
           date_ymd[2]=date_ymd[2]-28;
