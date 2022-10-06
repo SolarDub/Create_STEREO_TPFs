@@ -42,7 +42,6 @@ while IFS='=', read -r KEY VAL; do
   # Execute if the list of input switches is not empty
   #
   if [[ $SWS == *"-d"* ]] || [[ $SWS == *"-f"* ]]
-#  if [ -n "$SWS" ]
   then
     # Overwrite read script directory value with path read earlier as BASEDIR
     if [[ $KEY == "THIS_SCRIPT_DIR" ]]
@@ -67,7 +66,6 @@ done < "$DIRSFILENAME"
 # Execute if the list of switches is not empty
 #
 if [[ $SWS == *"-d"* ]] || [[ $SWS == *"-f"* ]]
-#if [ -n "$SWS" ]
 then
   # Write over directory file names in text filenames
   #
