@@ -1,9 +1,0 @@
-#!/bin/bash
-#
-while read -r line; do
-#  awk -F"\t" 'BEGIN{ OFS=""}{
-  awk '{print $0}' |
-  while read info; do
-    : echo $info
-  done
-done < "OneStar.txt"
