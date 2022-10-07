@@ -9,6 +9,7 @@ source "./shfuncs/update.sh"
 source "./shfuncs/rewrite.sh"
 source "./shfuncs/getVal.sh"
 source "./shfuncs/ifHelp.sh"
+source "./shfuncs/getCoords.sh"
 
 ###################################
 # SET UP FILE AND DIRECTORY PATHS #
@@ -97,6 +98,28 @@ echo $OUTDIR
 echo $STARLISTFILEPATH
 echo ' '
 
+
+##############################################
+# Prompt user for star name if switch exists #
+##############################################
+
+if [[ $SWS == *"-s"* ]]
+then
+
+  PRMPT1="Enter single star name"  # Create user prompt text
+  PRMPT2="(Coordinates will be obtained automatically)"
+  PRMPT3="Enter 0 to quit."
+  STARENT="$(prompt "$PRMPT1\n$PRMPT2\n$PRMPT3")"  # Prompt user to enter value
+
+  starname="${STARENT%" "}"                    # Remove trailing space
+
+  if [[ $starname == "0" ]]
+  then
+    exit
+  fi
+
+fi
+
 #####################################################
 # Prompt user for orbits over which to produce TPFs #
 #####################################################
@@ -109,7 +132,8 @@ while [[ $ORBS != "10" ]] && [[ $ORBS != "0" ]]; do
   ORBS="${ORBENT%" "}"                   # Remove trailing space
 done
 
-if [[ $ORBS == "0" ]]; then
+if [[ $ORBS == "0" ]]
+then
   exit
 fi
 
@@ -119,17 +143,37 @@ echo ' '
 #####################################################################
 # Run Target Pixel File creation program for each star in star list #
 #####################################################################
-# Loop over each star in file, retrieving its name and celestial coordinates
+# For a given star, retrieve its name and celestial coordinates
 # RA: Right Ascension; DEC: Declination
 # Name RA_hours RA_minutes RA_seconds DEC_degrees DEC_minutes DEC_seconds
 # Each value is separated by spaces, but read (and passed) as a single entity
-# The C code then splits this single entity into its six constituents then
-# passed into their respective arrays.
+# The C code splits this single entity into its six constituents and
+# passes them into their respective arrays.
 
-while read -r info; do
+if [[ $SWS == *"-s"* ]]
+then
 
-  read NAME coords <<< "$info"
+  starname_NO_WS="$(echo -e "${starname}" | tr -d '[:space:]')"   # Remove remaining whitespaces
 
-  ./createTPFs.exe $NAME $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+  coords="$(getCoords $starname)"
 
-done < "$STARLISTFILEPATH"
+  ./createTPFs.exe $starname_NO_WS $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+
+else
+
+  # Loop over each star in file, retrieve its name and celestial coordinates
+  while read -r info; do
+
+    if [[ $SWS == *"-c"* ]]
+    then
+      read starname coords <<< "$info"
+    else
+      read starname <<< "$info"
+      coords="$(getCoords $starname)"
+    fi
+
+    ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+
+  done < "$STARLISTFILEPATH"
+
+fi
