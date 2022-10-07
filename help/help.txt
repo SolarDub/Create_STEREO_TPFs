@@ -20,6 +20,11 @@ Description:
     Both the above will quit execution on printing their respective text.
 
 
+    default	With no switches, the program will obtain the existing directory and input file information.
+		It will access the star names from the star list file.
+		It will in turn obtain coordintes for these stars from SIMBAD.
+
+
     After entering the data relevant to the selection of the switches below,
     execution of the program will commence.
 
