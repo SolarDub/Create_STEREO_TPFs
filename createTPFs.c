@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
     status=0;                      /* Reset CFITSIO status to zero */
 
 /***************************************
-  Calculate analysis Start date & time */
+  Calculate analysis start date & time */
 
     if (getStartDate(orbit, star.RAdeg, date_ymd, dir.base) < 0)
     {
