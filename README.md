@@ -6,7 +6,7 @@ This project is ongoing, as this repository which will be updated with content s
 
 A simple application of this project is illustrated in the following video. The movie tracks 12 Sgr, a Cepheid variable star, across a series of 2008 HI-1A images, displayed at the bottom-right of the window. The star is enclosed by a green box. The bottom-left panel shows the 20x20 pixel images of the star produced by this application. Simple Aperture Photometry is performed on each pixel image, which determines the stellar flux at each 40-minute time-step and displayed as a blue point in a photometric time-series, or lightcurve, in the top panel.
 
-By the way - can you guess the three planets that appear in the HI-1A panel at the start of the movie? They are the objects with blooming across the vertical pixels of the CCD image. To the far-right is Saturn, which is lost early on. Near the center and moving right is Mars. The object that is near stationary as it has nearly the same orbital period as STEREO is... Earth!
+By the way - can you guess the three planets that appear in the HI-1A panel at the start of the movie? They are the objects with blooming across the vertical pixels of the CCD image. To the far-right is Saturn, which is lost early on. Near the center and moving right is Mars. The object that is near stationary, as it has nearly the same orbital period as STEREO, is... Earth!
 
 ----
 
