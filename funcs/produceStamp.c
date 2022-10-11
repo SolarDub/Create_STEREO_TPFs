@@ -1,5 +1,4 @@
-#include <stdio.h>
-#include "./headers/constants.h"
+#include "./headers/produceStamp.h"
 
 /********************************************************************************************/
 /*  Function:                                                                               */

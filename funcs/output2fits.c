@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "fitsio.h"
-#include "./headers/constants.h"
-#include "./headers/struct_target.h"
-#include "./headers/struct_path.h"
+#include "./headers/output2fits.h"
 
 /********************************************************************************************/
 /*  Function:                                                                               */
@@ -60,7 +54,7 @@ void output2fits(int TL, double *BJD,
 
 /***************************************************************************/
 
-/* 
+/*
   Allocate memory to datetimestr string pointer rows and copy data into pointer array */
   for (it = 0; it < TL; it++){
     ptr_dt[it] = (char *)malloc(DTS_SIZE+1);   /* Allocate memory to each string row (17 cols)) */
