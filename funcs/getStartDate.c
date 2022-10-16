@@ -55,10 +55,10 @@ int getStartDate(int orbit, double RAdeg, int *date_ymd, char *base_dir)
 
   /* Add decimal number of days for craft to reach specified object (at image center) from orbit start */
   /* Subtract 12 days to ensure star has not yet reached field of view */
-  /* It takes around 19 days for a star to cross the image, so subtracting 12 days gives a safety */
+  /* It takes around 19 days for a star to cross the image, so subtracting 15 days gives a safety */
   /* buffer of 2.5 days before the star enters the image, plus just under another day before it */
-  /* enters the data collection region. */
-  JD = JDstart + RAdeg/RArate - 12;
+  /* enters the data collection region. (A 12-day buffer wasn't enough) */
+  JD = JDstart + RAdeg/RArate - 15;
 
   /* Convert from Julian Date to UTC start date/time */
   JD_status = GUTC_JD(JD, date_ymd);
