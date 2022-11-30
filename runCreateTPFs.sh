@@ -4,12 +4,14 @@
 # Import functions #
 ####################
 
-source "./shfuncs/prompt.sh"
-source "./shfuncs/update.sh"
-source "./shfuncs/rewrite.sh"
-source "./shfuncs/getVal.sh"
-source "./shfuncs/ifHelp.sh"
-source "./shfuncs/getCoords.sh"
+SRCDIR="./src/Bash"
+
+source ${SRCDIR}"/prompt.sh"
+source ${SRCDIR}"/update.sh"
+source ${SRCDIR}"/rewrite.sh"
+source ${SRCDIR}"/getVal.sh"
+source ${SRCDIR}"/ifHelp.sh"
+source ${SRCDIR}"/getCoords.sh"
 
 ###################################
 # SET UP FILE AND DIRECTORY PATHS #
