@@ -130,8 +130,7 @@ if [[ $SWS == *"-s"* ]]
 then
 
   coords="$(getCoords $starname)"
-
-  ./createTPFs.exe $starname_NO_WS $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+  ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
 else
 
