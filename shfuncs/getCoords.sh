@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# getCoords
-# Get star coordinates using Python script that performs a Simbad request
+# getVal
+# Get value assigned to given key name
 function getCoords() {
 
 #
@@ -10,7 +10,7 @@ function getCoords() {
 # 2>&1 - redirect stderr to stdout
 # > /dev/null - ignore all other stdout output
 # Assign output to variable
-  STRINGIN="$(python3 ./src/Python/SIMBAD_getCoords.py "$star" 2>&1 > /dev/null)"
+  STRINGIN="$(python3 ./pyfuncs/SIMBAD_getCoords.py "$starname" 2>&1 > /dev/null)"
 
   REMOVE1=${STRINGIN:1:${#STRINGIN}-2}
   SPLIT=(${REMOVE1//,/ }) # Replace comma with space, then split all using space delimiter
@@ -23,9 +23,9 @@ function getCoords() {
   DECm="${SPLIT[4]}"
   DECs="${SPLIT[5]%"'"}"
 
-  coordstr="$RAh $RAm $RAs $DECd $DECm $DECs" # Combine coordinates as a string with space delimiters
+  coordstr="$RAh $RAm $RAs $DECd $DECm $DECs"
 
-  echo $coordstr   # Return coordinates
+  echo $coordstr
 
 }
 

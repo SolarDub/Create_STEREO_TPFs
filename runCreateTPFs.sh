@@ -4,14 +4,14 @@
 # Import functions #
 ####################
 
-SRCDIR="./src/Bash"
-
-source ${SRCDIR}"/prompt.sh"
-source ${SRCDIR}"/update.sh"
-source ${SRCDIR}"/rewrite.sh"
-source ${SRCDIR}"/getVal.sh"
-source ${SRCDIR}"/ifHelp.sh"
-source ${SRCDIR}"/getCoords.sh"
+source "./shfuncs/prompt.sh"
+source "./shfuncs/update.sh"
+source "./shfuncs/rewrite.sh"
+source "./shfuncs/getVal.sh"
+source "./shfuncs/ifHelp.sh"
+source "./shfuncs/getCoords.sh"
+source "./shfuncs/getOrbits.sh"
+source "./shfuncs/getStarname.sh"
 
 ###################################
 # SET UP FILE AND DIRECTORY PATHS #
@@ -101,43 +101,17 @@ echo $STARLISTFILEPATH
 echo ' '
 
 
-##############################################
-# Prompt user for star name if switch exists #
-##############################################
+#############################
+# Prompt user for star name #
+#############################
 
-if [[ $SWS == *"-s"* ]]
-then
-
-  PRMPT1="Enter single star name"  # Create user prompt text
-  PRMPT2="(Coordinates will be obtained automatically)"
-  PRMPT3="Enter 0 to quit."
-  STARENT="$(prompt "$PRMPT1\n$PRMPT2\n$PRMPT3")"  # Prompt user to enter value
-
-  starname="${STARENT%" "}"                    # Remove trailing space
-
-  if [[ $starname == "0" ]]
-  then
-    exit
-  fi
-
-fi
+starname="$(getStarname)"
 
 #####################################################
 # Prompt user for orbits over which to produce TPFs #
 #####################################################
 
-while [[ $ORBS != "10" ]] && [[ $ORBS != "0" ]]; do
-  PRMPT1="Enter orbit list separate by spaces (only 10 allowed right now)"  # Create user prompt text
-  PRMPT2="(use switch --ohelp to list orbits and dates)"
-  PRMPT3="Enter 0 to quit."
-  ORBENT="$(prompt "$PRMPT1\n$PRMPT2\n$PRMPT3")"  # Prompt user to enter value
-  ORBS="${ORBENT%" "}"                   # Remove trailing space
-done
-
-if [[ $ORBS == "0" ]]
-then
-  exit
-fi
+ORBS="$(getOrbits)"
 
 echo "Orbits selected: ${ORBS}"
 echo ' '
@@ -154,8 +128,6 @@ echo ' '
 
 if [[ $SWS == *"-s"* ]]
 then
-
-  starname_NO_WS="$(echo -e "${starname}" | tr -d '[:space:]')"   # Remove remaining whitespaces
 
   coords="$(getCoords $starname)"
 
