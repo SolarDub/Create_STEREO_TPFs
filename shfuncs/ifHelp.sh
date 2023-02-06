@@ -4,7 +4,7 @@
 # Prints help file to screen if switch is selected
 function ifHelp() {
 
-  if [[ $SWS == *"--help"* ]]
+  if [[ $SWS == *"-h"* ]] || [[ $SWS == "" ]]
   then
     cat ./help/help.txt
     exit
