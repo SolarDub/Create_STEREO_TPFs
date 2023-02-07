@@ -10,7 +10,7 @@ function checkCoords() {
 # 2>&1 - redirect stderr to stdout
 # > /dev/null - ignore all other stdout output
 # Assign output to variable
-  STRINGIN="$(python3 ./pyfuncs/celestial2ecliptic.py "$coords" 2>&1 > /dev/null)"
+  STRINGIN="$(python3 ./src/Python/celestial2ecliptic.py "$coords" 2>&1 > /dev/null)"
 
   VAL=${STRINGIN:1:1}
 

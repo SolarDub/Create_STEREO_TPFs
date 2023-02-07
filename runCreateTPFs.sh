@@ -4,8 +4,7 @@
 # Import functions #
 ####################
 
-#SRCDIR="./src/Bash"
-SRCDIR="./shfuncs"
+SRCDIR="./src/Bash"
 
 source ${SRCDIR}"/prompt.sh"
 source ${SRCDIR}"/update.sh"
@@ -142,7 +141,7 @@ then
     echo ""
     exit
   fi
-  exit
+  
   ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
 else

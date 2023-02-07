@@ -10,7 +10,7 @@ function getCoords() {
 # 2>&1 - redirect stderr to stdout
 # > /dev/null - ignore all other stdout output
 # Assign output to variable
-  STRINGIN="$(python3 ./pyfuncs/SIMBAD_getCoords.py "$starname" 2>&1 > /dev/null)"
+  STRINGIN="$(python3 ./src/Python/SIMBAD_getCoords.py "$starname" 2>&1 > /dev/null)"
 
   REMOVE1=${STRINGIN:1:${#STRINGIN}-2}
   SPLIT=(${REMOVE1//,/ }) # Replace comma with space, then split all using space delimiter
