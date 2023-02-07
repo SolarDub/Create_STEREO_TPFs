@@ -4,17 +4,17 @@
 # Import functions #
 ####################
 
-SRCDIR="./src/Bash"
+SRCDIR="./src/Bash/"
 
-source ${SRCDIR}"/prompt.sh"
-source ${SRCDIR}"/update.sh"
-source ${SRCDIR}"/rewrite.sh"
-source ${SRCDIR}"/getVal.sh"
-source ${SRCDIR}"/ifHelp.sh"
-source ${SRCDIR}"/getCoords.sh"
-source ${SRCDIR}"/checkCoords.sh"
-source ${SRCDIR}"/getOrbits.sh"
-source ${SRCDIR}"/getStarname.sh"
+source ${SRCDIR}"prompt.sh"
+source ${SRCDIR}"update.sh"
+source ${SRCDIR}"rewrite.sh"
+source ${SRCDIR}"getVal.sh"
+source ${SRCDIR}"ifHelp.sh"
+source ${SRCDIR}"getCoords.sh"
+source ${SRCDIR}"checkCoords.sh"
+source ${SRCDIR}"getOrbits.sh"
+source ${SRCDIR}"getStarname.sh"
 
 ###################################
 # SET UP FILE AND DIRECTORY PATHS #
@@ -141,7 +141,7 @@ then
     echo ""
     exit
   fi
-  
+
   ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
 else
