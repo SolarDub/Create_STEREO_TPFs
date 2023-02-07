@@ -4,14 +4,18 @@
 # Import functions #
 ####################
 
-source "./shfuncs/prompt.sh"
-source "./shfuncs/update.sh"
-source "./shfuncs/rewrite.sh"
-source "./shfuncs/getVal.sh"
-source "./shfuncs/ifHelp.sh"
-source "./shfuncs/getCoords.sh"
-source "./shfuncs/getOrbits.sh"
-source "./shfuncs/getStarname.sh"
+#SRCDIR="./src/Bash"
+SRCDIR="./shfuncs"
+
+source ${SRCDIR}"/prompt.sh"
+source ${SRCDIR}"/update.sh"
+source ${SRCDIR}"/rewrite.sh"
+source ${SRCDIR}"/getVal.sh"
+source ${SRCDIR}"/ifHelp.sh"
+source ${SRCDIR}"/getCoords.sh"
+source ${SRCDIR}"/checkCoords.sh"
+source ${SRCDIR}"/getOrbits.sh"
+source ${SRCDIR}"/getStarname.sh"
 
 ###################################
 # SET UP FILE AND DIRECTORY PATHS #
@@ -130,6 +134,15 @@ if [[ $SWS == *"-s"* ]]
 then
 
   coords="$(getCoords $starname)"
+  echo "Coordinates of "${starname}": "${coords}
+  echo ""
+  check="$(checkCoords $coords)"
+  if [[ ${check} == 1 ]]; then
+    echo ${starname}" lies outside image bounds. Exiting."
+    echo ""
+    exit
+  fi
+  exit
   ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
 else
@@ -144,6 +157,14 @@ else
       read starname <<< "$info"
       coords="$(getCoords $starname)"
     fi
+
+    check="$(checkCoords $coords)"
+    if [[ ${check} == 1 ]]; then
+      echo ${star}" lies outside image bounds. Moving to next star."
+      echo ""
+      continue
+    fi
+
 
     ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
