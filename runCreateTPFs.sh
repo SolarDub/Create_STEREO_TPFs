@@ -103,22 +103,6 @@ echo $OUTDIR
 echo $STARLISTFILEPATH
 echo ' '
 
-
-#############################
-# Prompt user for star name #
-#############################
-
-starname="$(getStarname)"
-
-#####################################################
-# Prompt user for orbits over which to produce TPFs #
-#####################################################
-
-ORBS="$(getOrbits)"
-
-echo "Orbits selected: ${ORBS}"
-echo ' '
-
 #####################################################################
 # Run Target Pixel File creation program for each star in star list #
 #####################################################################
@@ -132,6 +116,12 @@ echo ' '
 if [[ $SWS == *"-s"* ]]
 then
 
+  #############################
+  # Prompt user for star name #
+  #############################
+
+  starname="$(getStarname)"
+
   coords="$(getCoords $starname)"
   echo "Coordinates of "${starname}": "${coords}
   echo ""
@@ -142,20 +132,38 @@ then
     exit
   fi
 
-  ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+  #####################################################
+  # Prompt user for orbits over which to produce TPFs #
+  #####################################################
 
-else
+  ORBS="$(getOrbits)"
+
+  if [[ ${ORBS} == "0" ]]; then
+    echo "Exiting."
+    echo ' '
+    exit
+  else
+    echo "Orbits selected: ${ORBS}"
+    echo ' '
+  fi
+
+  ./bin/createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+
+elif [[ $SWS == *"-l"* ]]
+then
 
   # Loop over each star in file, retrieve its name and celestial coordinates
   while read -r info; do
 
-    if [[ $SWS == *"-c"* ]]
+    if [[ $SWS == *"-c"* ]]   # Read starname and coords from file
     then
       read starname coords <<< "$info"
-    else
+    else                      # Read only starname from file
       read starname <<< "$info"
       coords="$(getCoords $starname)"
     fi
+    echo "Coordinates of "${starname}": "${coords}
+    echo ""
 
     check="$(checkCoords $coords)"
     if [[ ${check} == 1 ]]; then
@@ -164,8 +172,22 @@ else
       continue
     fi
 
+    #####################################################
+    # Prompt user for orbits over which to produce TPFs #
+    #####################################################
 
-    ./createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
+    ORBS="$(getOrbits)"
+
+    if [[ ${ORBS} == 0 ]]; then
+      echo "Exiting."
+      echo ' '
+      exit
+    else
+      echo "Orbits selected: ${ORBS}"
+      echo ' '
+    fi
+
+    ./bin/createTPFs.exe $starname $coords $BASDIR $HI1ADIR $OUTDIR $ORBS
 
   done < "$STARLISTFILEPATH"
 

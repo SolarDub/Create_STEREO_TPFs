@@ -29,7 +29,7 @@ double STEREO_UTC2BJD(int *date_ymd, int *time_hms, TARG *ptr_star, char *base_d
   const float spd    = 86400.0;            /* Seconds per day */
   const float c      = 299792.458;         /* Speed of light in vacuum in km/s */
   const float DE     = 149597870.700;      /* Earth-Sun distance in km */
-  const float RsAU   = 0.9618568;          /* STEREO_A-Sun mean distance in AU */
+//  const float RsAU   = 0.9618568;          /* STEREO_A-Sun mean distance in AU */
   const float UTC2TT = 32.184;             /* International Atomic Time (TAI) */
                                            /* to Terrestrial Time (TT) correction */
                                            /* UTC and TAI run at same rate */
@@ -41,7 +41,7 @@ double STEREO_UTC2BJD(int *date_ymd, int *time_hms, TARG *ptr_star, char *base_d
                                      /* Time difference between photon from an object */
                                      /* to reach the Sun and reach an observer away from the Sun */
   double RASunBary, DECSunBary;      /* Coordinates from Sun to Barycenter */
-  double RABarySun, DECBarySun;      /* Coordinates from Barycenter to Sun*/
+//  double RABarySun, DECBarySun;      /* Coordinates from Barycenter to Sun*/
   double HJD2BJD;                    /* Same as Roemer delay but between the Sun and the Solar System Barycenter */
   double HJD, BJD;                   /* Heliocentric and Barycentric Julian Dates */
 

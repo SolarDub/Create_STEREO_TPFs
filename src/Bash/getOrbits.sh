@@ -12,11 +12,6 @@ function getOrbits() {
     ORBS="${ORBENT%" "}"                   # Remove trailing space
   done
 
-  if [[ $ORBS == "0" ]]
-  then
-    exit
-  fi
-
   echo $ORBS
 
 }

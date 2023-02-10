@@ -25,8 +25,10 @@ void output2fits(int TL, double *BJD,
   char filename[CHAR_SIZE];
   fitsfile *fptr;               /* FITS file pointer, defined in fitsio.h */
   int status = 0;               /* CFITSIO status value MUST be initialized to zero! */
-  int hdunum, hdutype, colnum, tfields;
-  long nrows, firstrow, firstelem, nelements;
+  int colnum;
+//  int hdunum, hdutype, tfields;
+//  long nrows;
+  long firstrow, firstelem, nelements;
 
 /*
   FITS FILE HEADER variable initialization */

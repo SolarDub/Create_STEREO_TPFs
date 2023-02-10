@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 
 /*
   TIME variable initialization */
-  const int t_str = 541;             /* Time of first image of the day in seconds hhmmss: 000901 (not 2007, 2021) */
+//  const int t_str = 541;             /* Time of first image of the day in seconds hhmmss: 000901 (not 2007, 2021) */
   const int dt = 40;                 /* Time between images in minutes (image cadence) */
   const int ipd = 36;                /* Number of images per day */
   const int TL = 100*ipd;            /* Limiting number of images to acquire (over-estimates number needed) */
@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 
 /*
   STAMP array initialization */
-  float stamp[N_STAMP][N_STAMP];     /* Star single image stamp array */
+//  float stamp[N_STAMP][N_STAMP];     /* Star single image stamp array */
 
 /*
   SURVEY arrays initialization */
@@ -51,9 +51,9 @@ int main(int argc, char *argv[])
 
 /*
   OUTPUT FITS FILE variable initialization */
-  fitsfile *outptr;                  /* Pointer to HI-1A output TPF FITS file, defined in fitsio.h */
-  char outputfile[60];               /* TPF filename to save */
-  char outputfilename[120];          /* Directory path to save + TPF filename */
+//  fitsfile *outptr;                  /* Pointer to HI-1A output TPF FITS file, defined in fitsio.h */
+//  char outputfile[60];               /* TPF filename to save */
+//  char outputfilename[120];          /* Directory path to save + TPF filename */
 
   /*
   OTHER variable initializations */

@@ -12,18 +12,14 @@ To execute:
 
 Description:
 
-    --help	Prints this help file
+    default	With no switches, the this help file is printed.
+
+    --help	Prints this help file.
 
     --ohelp	Lists the STEREO orbits by number.
 		Each new orbit starts as the center of the HI-1A field-of-view passes 0h RA.
 
-    Both the above will quit execution on printing their respective text.
-
-
-    default	With no switches, the program will obtain the existing directory and input file information.
-		It will access the star names from the star list file.
-		It will in turn obtain coordintes for these stars from SIMBAD.
-
+    All the above will quit execution on printing their respective text.
 
     After entering the data relevant to the selection of the switches below,
     execution of the program will commence.
@@ -32,7 +28,7 @@ Description:
     -c		Read coordinates from supplied star list text file.
 
 		With this switch, the program will access a text file to read a list of star names and coordinates.
-		The user should ensure this text file will be accessed using the -f switch.
+		The user should ensure which text file will be accessed using the -f switch.
 
 		Without this switch, the program will read a text file containing a list of star names.
 		A Python script will be executed to determine the star's coordinates from SIMBAD.
@@ -56,13 +52,25 @@ Description:
                 the star as listed in the input star list file (see below).
 
 
-    -f		Prompts user to change the input star list file.
+    -f		Prompts user to change the input star list file in the 'starLists' directory.
 
-		This is the base path to the STEREO HI1A data.
-		
 		Default: 
 
-		https://stereo-ssc.nascom.nasa.gov/pub/ins_data/secchi_hi/L2/a/img/hi_1
+		OneStar.txt
+
+
+    -l		Reads list of input stars (and coordinates) from list file in the 'starLists' directory.
+
+		The program will read and produce TPFs for stars according to a list within a specificied
+		text file within the 'starLists' directory. The star list file can be selected using the
+		-f flag.
+
+		If only -l is set, the list file should only contain a list of stars. The program will
+		perform a SIMBAD request to acquire the current star's coordinates.
+		For example: see OneStarNoCoords.txt
+
+		If -l & -c are set, the list file should contain stars followed by their coordinates. 
+		For example: see OneStar.txt
 
 
     -s		Enter single star name into prompt.

@@ -159,6 +159,12 @@ int coords2pixels(fitsfile *fptr, TARG *ptr_star, double *pxvl, double *pyvl)
     x =  R*sinphi;                 /* CG Eq (20) */
     y = -R*cosphi/cos(gamma);      /* CG Eq (21) */
   }
+  else
+  {
+    printf("Projection set to: %s.\n", proj);
+    printf("Projection not set to AZP. Exiting\n\n");
+    exit(-1);
+  }
 
   /* Perform image rotation and scaling */
   /* from intermediate world coordinates (x,y) while scaling (sx, sy) */
