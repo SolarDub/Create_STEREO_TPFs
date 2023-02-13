@@ -10,7 +10,7 @@ DEPFLAGS=-MP -MD
 # Automatically append -I onto each include directory
 INCDIRS=$(foreach D,$(IDIRS),-I$(D)/)
 # Compilation flags
-CFLAGS=-Wall -Wextra -g $(INCDIRS) $(OPT) $(DEPFLAGS)
+CFLAGS=-Wall -Wextra $(INCDIRS) $(OPT) $(DEPFLAGS)
 # Library flags
 LFLAGS=-L. -lcfitsio -lm -lcurl
 
