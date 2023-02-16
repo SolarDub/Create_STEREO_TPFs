@@ -1,4 +1,4 @@
-BINARY=./bin/getDateRange # Binary executable plus relative path
+BINARY=./bin/createTPFs.exe # Binary executable plus relative path
 CODEDIRS=. ./src ./src/C # Code directories - can be a list
 IDIRS=. $(CODEDIRS)/headers # Include directories - can be a list
 CFIODIR=/usr/local/include/

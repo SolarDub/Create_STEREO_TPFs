@@ -81,7 +81,6 @@ void output2fits(int TL, double *BJD,
   if (status) fits_report_error(stderr, status);    /* print any error message */
   status = 0;
 
-
 /* BJD TIME column and related keys */
 
   /* Assign TIME to 1st column */
@@ -167,6 +166,36 @@ void output2fits(int TL, double *BJD,
   }
 
 /* Additional keys */
+
+  fits_update_key(fptr, TSTRING, "OBSERVAT", "STEREO A", "observatory", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TSTRING, "INSTRUME", "Heliosphe Imager-1", "instrument", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TINT, "ORBIT", &orbit, "observation orbit", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TSTRING, "OBJECT", ptr_star->name, "target name", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TSTRING, "RADESYS", "ICRS", "reference frame of celestial coordinates", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TDOUBLE, "RA_OBJ", &(ptr_star->RAdeg), "[deg] right ascension", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+  fits_update_key(fptr, TDOUBLE, "DEC_OBJ", &(ptr_star->DECdeg), "[deg] declination", &status);
+  if (status) fits_report_error(stderr, status);    /* print any error message */
+  status = 0;
+
+
 
   /* Write header keywords; must pass the ADDRESS of the value */
   fits_update_key(fptr, TINT, "STATUS", &status, "File open status", &status);

@@ -1,4 +1,4 @@
-THIS_SCRIPT_DIR=/Users/pwilliams/Documents/Programming/C/Projects/c/STEREO_Code/Create_STEREO_TPFs
+THIS_SCRIPT_DIR=/Users/pwilliams/Documents/Research/stereo/Create_STEREO_TPFs
 HI1A_DATA_DIR=/Users/pwilliams/Documents/Research/stereo/h1A
 FITS_OUT_DIR=/Users/pwilliams/Documents/Research/stereo/StellarData
 STAR_COORD_LIST_FILE=OneStar.txt
