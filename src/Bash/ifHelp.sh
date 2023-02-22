@@ -19,6 +19,15 @@ function ifHelp() {
     exit
   fi
 
+  if [[ $SWS == *"--dhelp"* ]]
+  then
+    echo ' '
+    echo 'KEYNAME=value'
+    cat ./tables/directory_file_lists.txt
+    echo ' '
+    exit
+  fi
+
 }
 
 export -f ifHelp

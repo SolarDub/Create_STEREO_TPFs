@@ -16,6 +16,8 @@ Description:
 
     --help	Prints this help file.
 
+    --dhelp	Prints current and data directory paths and data URL path.
+
     --ohelp	Lists the STEREO orbits by number.
 		Each new orbit starts as the center of the HI-1A field-of-view passes 0h RA.
 
@@ -39,7 +41,7 @@ Description:
 
 		First path is to this script to be verified by the user.
 		This is necessary to establish a path to the directory/URL text file.
-		
+
 		Second path is to the base STEREO HI1A data directory.
 		Its default is of the form ##/##/stereo/h1a
                 This contains the HI-1A image FITS files contructed by
@@ -54,7 +56,7 @@ Description:
 
     -f		Prompts user to change the input star list file in the 'starLists' directory.
 
-		Default: 
+		Default:
 
 		OneStar.txt
 
@@ -69,7 +71,7 @@ Description:
 		perform a SIMBAD request to acquire the current star's coordinates.
 		For example: see OneStarNoCoords.txt
 
-		If -l & -c are set, the list file should contain stars followed by their coordinates. 
+		If -l & -c are set, the list file should contain stars followed by their coordinates.
 		For example: see OneStar.txt
 
 
@@ -81,5 +83,3 @@ Description:
 
 
 ******************************************************************************************
-
-
