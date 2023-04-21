@@ -27,7 +27,7 @@ int main(int argc, char *argv[])
 //  const int t_str = 541;             /* Time of first image of the day in seconds hhmmss: 000901 (not 2007, 2021) */
   const int dt = 40;                 /* Time between images in minutes (image cadence) */
   const int ipd = 36;                /* Number of images per day */
-  const int TL = 100*ipd;            /* Limiting number of images to acquire (over-estimates number needed) */
+  const int TL = 100*ipd;            /* Limiting number of images to acquire (purposefully over-estimates number needed) */
   int it;                            /* Image timestamp index */
   int date_ymd[3], time_hms[3];      /* Date array: [y m d], UTC Time array: [h m s] */
 
@@ -50,7 +50,7 @@ int main(int argc, char *argv[])
   double BJD[TL];                    /* Barycentric Julian Date time */
   const double offset = 2450000.0;   /* BJD offset */
   float s[TL][N_STAMP][N_STAMP];     /* Target imagestamps - Note reversal of dimensions */
-  float *ptr_s = &s[0][0][0];        /* Pointer to complete image stamp array */
+  float *ptr_s = &s[0][0][0];        /* Pointer to first element of image stamp array */
   double px[TL], py[TL];             /* x, y image coordinates of star */
   char datetimestr[TL][DTS_SIZE];    /* Date & time information relating to input image filename */
                                      /* (yyyymmdd_hhmmss) */
@@ -178,7 +178,7 @@ int main(int argc, char *argv[])
 /**********************************
     Produce target image stamp   */
 
-    /* Passes pointer to beginning of stamp array for current time iteration */
+    /* Passes pointer to beginning of stamp array for this current 'it' time iteration */
       produceStamp(ptr_image, (int) floor(px[it]), (int) floor(py[it]), &s[it][0][0]);
       printf("\nSaved target image to array.\n");
 
