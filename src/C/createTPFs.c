@@ -17,8 +17,8 @@ int main(int argc, char *argv[])
 /*
   ORBIT variable initialization */
   int orbit;                         /* Orbit number (see tables/orbit_0h_cross_times.txt) */
-  int first_or_arg = 11;             /* Index of first orbit argument (for setting up orbit number array) */
-  int Norbs = argc - first_or_arg;   /* Number of orbits */
+  int first_orb_arg = 11;            /* Index of first orbit argument (for setting up orbit number array) */
+  int Norbs = argc - first_orb_arg;  /* Number of orbits */
   int orbits[Norbs];                 /* Array containing orbit numbers */
                                      /* Using malloc, etc. gave strange results */
 
