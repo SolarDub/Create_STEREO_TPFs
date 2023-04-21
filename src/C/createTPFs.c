@@ -3,10 +3,16 @@
 int main(int argc, char *argv[])
 {
 
-/****************************************************************************************/
-/* Main program to read HI-1A images from a series of .fits files during a given orbit  */
-/* for a selected star. Flux values for a pixel can be found.                           */
-/****************************************************************************************/
+/*****************************************************************************************/
+/* Main program to read HI-1A images from a series of .fits files during a given orbit   */
+/* for a selected star.                                                                  */
+/* The star is tracked as it moves across the HI-1A images.                              */
+/* A 20x20 pixel sub-image, or 'stamp', centered on the center of the stellar image is   */
+/* extracted for each HI-1A image, forming a time-series of stamps in the form of a      */
+/* time-stamped data-cube.                                                               */
+/* Along with the HI-1A pixel coordinates of the centroid of the stellar image, this     */
+/* data is output to the fits file, along with relevant meta-data within the file header */
+/*****************************************************************************************/
 
 /*
   ORBIT variable initialization */
