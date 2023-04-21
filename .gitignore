@@ -1,7 +1,7 @@
 # Compiler outputs #
 *.a
 *.bat
-#*.exe
+*.exe
 
 # Directories #
 #API_Parser_Output
@@ -14,3 +14,7 @@
 
 # System #
 .DS_Store
+
+# Reference text / diagrams
+*.ppt
+*.pptx
