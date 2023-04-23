@@ -143,14 +143,15 @@ int main(int argc, char *argv[])
       Close HI-1A image fits file   */
 
         fits_close_file(infptr, &status);
+        status = 0;              /* Reset CFITSIO status to zero */
 
 /************************
       Control program flow depending on pixel coordinates of star with respect to HI-1A image   */
 
+
         if (regchk != 0)            /* Star is not within image domain */
         {
           miss++;                  /* Increment missing image count */
-          status = 0;              /* Reset CFITSIO status to zero */
           if (regchk == 1)         /* Star has not yet reached image domain */
           {
             continue;              /* Jump to next image acquisition loop */
